@@ -21,8 +21,8 @@ export interface LinkProps {
   children: ComponentChildren;
 }
 
-export const createLink = (routerStore: () => RouterState) =>
-  function Link({ to, children }: LinkProps) {
+export function createLink(routerStore: () => RouterState) {
+  return function Link({ to, children }: LinkProps) {
     const { navigate } = routerStore();
     return (
       <a
@@ -36,7 +36,7 @@ export const createLink = (routerStore: () => RouterState) =>
       </a>
     );
   };
-
+}
 export function createRouterStore(storage: StateStorage): () => RouterState {
   // @ts-ignore
   return create(
