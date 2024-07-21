@@ -21,7 +21,7 @@ export interface LinkProps {
   children: ComponentChildren;
 }
 
-export const createLinkFactory = (routerStore: () => RouterState) =>
+export const createLink = (routerStore: () => RouterState) =>
   function Link({ to, children }: LinkProps) {
     const { navigate } = routerStore();
     return (
