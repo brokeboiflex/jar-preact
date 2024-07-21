@@ -1,20 +1,14 @@
-import { UniversalJSXElement, isValidElement } from "./jsx-types";
-import { create } from "zustand";
+import { JSX } from "preact/jsx-runtime";
 import { createJSONStorage, persist, StateStorage } from "zustand/middleware";
-import {
-  RouterContext,
-  useRouterStore as useRouterStoreContext,
-} from "./router-context";
-
+import { create } from "zustand";
+import { ComponentChildren, isValidElement } from "preact";
 export interface RouterProps {
-  children: UniversalJSXElement;
-  storage: StateStorage;
-  emptyRoute?: UniversalJSXElement;
+  children: ComponentChildren;
+  routerStore: () => RouterState;
 }
-
 export interface RouteProps {
   path: string;
-  component: UniversalJSXElement;
+  component: JSX.Element;
 }
 
 export interface RouterState {
@@ -22,7 +16,27 @@ export interface RouterState {
   navigate: (route: string) => void;
 }
 
-// Factory function to create the store
+export interface LinkProps {
+  to: string;
+  children: ComponentChildren;
+}
+
+export const createLinkFactory = (routerStore: () => RouterState) =>
+  function Link({ to, children }: LinkProps) {
+    const { navigate } = routerStore();
+    return (
+      <a
+        href=""
+        onClick={(e) => {
+          e.preventDefault();
+          navigate(to);
+        }}
+      >
+        {children}
+      </a>
+    );
+  };
+
 export function createRouterStore(storage: StateStorage): () => RouterState {
   // @ts-ignore
   return create(
@@ -38,18 +52,9 @@ export function createRouterStore(storage: StateStorage): () => RouterState {
     )
   );
 }
-
-export function Route(props: RouteProps) {
-  return null;
-}
-
-export function Router({
-  children,
-  storage,
-  emptyRoute = null,
-}: RouterProps): UniversalJSXElement {
-  const useRouterStore = createRouterStore(storage);
-  const { location } = useRouterStore();
+export function Router({ children, routerStore }: RouterProps) {
+  const { location } = routerStore();
+  console.log(location);
 
   // Filter children to get Route components
   const routes = Array.isArray(children) ? children : [children];
@@ -63,16 +68,11 @@ export function Router({
     return routeProps.path === location;
   });
 
-  // Render the matching component or a default message
-  if (currentRoute) {
-    const routeProps = (currentRoute as any).props as RouteProps;
-    return (
-      // @ts-ignore
-      <RouterContext.Provider value={useRouterStoreContext}>
-        {routeProps.component}
-      </RouterContext.Provider>
-    );
-  } else {
-    return emptyRoute;
-  }
+  return currentRoute ? (currentRoute as any).props.component : null;
+}
+
+// Route component
+// @ts-ignore
+export function Route({ path, component }: RouteProps) {
+  return null;
 }

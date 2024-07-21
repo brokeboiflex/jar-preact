@@ -1,5 +1,5 @@
 {
-  "name": "jar",
+  "name": "jar-preact",
   "version": "1.0.0",
   "description": "JAR - a JSX Abstract Router",
   "main": "./dist/index.cjs",
@@ -7,7 +7,7 @@
   "unpkg": "./dist/index.umd.js",
   "types": "./dist/index.d.ts",
   "scripts": {
-    "build": "microbundle",
+    "build": "microbundle --jsx React.createElement --jsxFragment React.Fragment --jsxImportSource react --globals react/jsx-runtime=jsx",
     "dev": "microbundle watch"
   },
   "keywords": [
@@ -27,15 +27,13 @@
     "default": "./dist/index.esm.js"
   },
   "devDependencies": {
-    "microbundle": "^0.15.1",
-    "preact": "^10.22.1",
-    "react": "^18.3.1"
+    "microbundle": "^0.15.1"
   },
   "peerDependencies": {
-    "preact": "^10.22.1",
-    "react": "^18.3.1"
+    "preact": "^10.22.1"
   },
   "dependencies": {
-    "zustand": "^4.5.4"
+    "zustand": "^4.5.4",
+    "preact": "^10.22.1"
   }
 }
