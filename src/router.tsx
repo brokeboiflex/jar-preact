@@ -1,4 +1,3 @@
-import { JSX } from "preact/jsx-runtime";
 import { createJSONStorage, persist, StateStorage } from "zustand/middleware";
 import { create } from "zustand";
 import { ComponentChildren, isValidElement } from "preact";
@@ -8,7 +7,7 @@ export interface RouterProps {
 }
 export interface RouteProps {
   path: string;
-  component: JSX.Element;
+  component: ComponentChildren;
 }
 
 export interface RouterState {
