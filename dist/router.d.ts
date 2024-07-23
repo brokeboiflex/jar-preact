@@ -12,6 +12,7 @@ export interface RouterState {
     history: string[];
     location: string;
     navigate: (route: string) => void;
+    goBack: () => void;
 }
 export interface LinkProps {
     to: string;
