@@ -55,8 +55,8 @@ export function createRouterStore(
           })),
         goBack: () =>
           set((state: RouterState) => ({
-            history: [...state.history].slice(0, -1),
             location: state.history[state.history.length - 1],
+            history: [...state.history].slice(0, -1),
           })),
       }),
       {
