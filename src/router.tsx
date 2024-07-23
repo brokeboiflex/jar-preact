@@ -1,6 +1,6 @@
 import { createJSONStorage, persist, StateStorage } from "zustand/middleware";
 import { create } from "zustand";
-import { ComponentChildren, isValidElement } from "preact";
+import { ComponentChildren, Fragment, isValidElement } from "preact";
 export interface RouterProps {
   children: ComponentChildren;
   routerStore: () => RouterState;
@@ -55,7 +55,7 @@ export function createRouterStore(
           })),
         goBack: () =>
           set((state: RouterState) => ({
-            location: state.history[state.history.length - 1],
+            location: state.history[state.history.length - 2],
             history: [...state.history].slice(0, -1),
           })),
       }),
@@ -68,7 +68,6 @@ export function createRouterStore(
 }
 export function Router({ children, routerStore }: RouterProps) {
   const { location } = routerStore();
-  console.log(location);
 
   // Filter children to get Route components
   const routes = Array.isArray(children) ? children : [children];
@@ -82,7 +81,9 @@ export function Router({ children, routerStore }: RouterProps) {
     return routeProps.path === location;
   });
 
-  return currentRoute ? (currentRoute as any).props.component : null;
+  return currentRoute ? (
+    <Fragment key={location}>{(currentRoute as any).props.component}</Fragment>
+  ) : null;
 }
 
 // Route component
