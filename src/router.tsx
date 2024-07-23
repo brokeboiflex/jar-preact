@@ -11,6 +11,7 @@ export interface RouteProps {
 }
 
 export interface RouterState {
+  history: string[];
   location: string;
   navigate: (route: string) => void;
 }
@@ -36,16 +37,24 @@ export function createLink(routerStore: () => RouterState) {
     );
   };
 }
-export function createRouterStore(storage: StateStorage): () => RouterState {
+export function createRouterStore(
+  storage: StateStorage,
+  key?: string
+): () => RouterState {
   // @ts-ignore
   return create(
     persist(
       (set) => ({
+        history: ["/"],
         location: "/", // Default route
-        navigate: (route: string) => set({ location: route }),
+        navigate: (route: string) =>
+          set((state: RouterState) => ({
+            history: [...state.history, route],
+            location: route,
+          })),
       }),
       {
-        name: "router-storage", // Name of the item in chrome.storage.local
+        name: `router-storage${key ? "-" + key : ""}`,
         storage: createJSONStorage(() => storage),
       }
     )
