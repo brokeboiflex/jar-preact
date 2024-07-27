@@ -39,32 +39,50 @@ export function createLink(routerStore: () => RouterState) {
   };
 }
 export function createRouterStore(
-  storage: StateStorage,
+  storage?: StateStorage,
   key?: string
 ): () => RouterState {
   // @ts-ignore
-  return create(
-    persist(
-      (set) => ({
-        history: ["/"],
-        location: "/", // Default route
-        navigate: (route: string) =>
-          set((state: RouterState) => ({
-            history: [...state.history, route],
-            location: route,
-          })),
-        goBack: () =>
-          set((state: RouterState) => ({
-            location: state.history[state.history.length - 2],
-            history: [...state.history].slice(0, -1),
-          })),
-      }),
-      {
-        name: `router-storage${key ? "-" + key : ""}`,
-        storage: createJSONStorage(() => storage),
-      }
-    )
-  );
+
+  if (storage) {
+    return create<RouterState>()(
+      persist(
+        (set) => ({
+          history: ["/"],
+          location: "/", // Default route
+          navigate: (route: string) =>
+            set((state: RouterState) => ({
+              history: [...state.history, route],
+              location: route,
+            })),
+          goBack: () =>
+            set((state: RouterState) => ({
+              location: state.history[state.history.length - 2],
+              history: [...state.history].slice(0, -1),
+            })),
+        }),
+        {
+          name: `router-storage${key ? "-" + key : ""}`,
+          storage: createJSONStorage(() => storage),
+        }
+      )
+    );
+  } else {
+    return create<RouterState>()((set) => ({
+      history: ["/"],
+      location: "/", // Default route
+      navigate: (route: string) =>
+        set((state: RouterState) => ({
+          history: [...state.history, route],
+          location: route,
+        })),
+      goBack: () =>
+        set((state: RouterState) => ({
+          location: state.history[state.history.length - 2],
+          history: [...state.history].slice(0, -1),
+        })),
+    }));
+  }
 }
 export function Router({ children, routerStore }: RouterProps) {
   const { location } = routerStore();
